@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://spendwiseai-co3j.onrender.com",
+    baseURL: "https://spendwiseai-co3j.onrender.com/api",
     headers: {
         "Content-Type": "application/json",
     },
