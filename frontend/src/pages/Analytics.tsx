@@ -915,13 +915,7 @@ setMonthlySummary(
                     />
 
                     <Tooltip
-                        formatter={(value: number | undefined) =>
-                            value === undefined
-                                ? ""
-                                : `₹${Number(value).toLocaleString(
-                                    "en-IN"
-                                )}`
-                        }
+                       formatter={(value) => `₹${Number(value ?? 0).toLocaleString("en-IN")}`}
                     />
 
                     <Bar
