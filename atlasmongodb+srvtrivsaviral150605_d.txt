@@ -1,0 +1,1 @@
+atlas::mongodb+srv://trivsaviral150605_db_user:<db_password>@cluster0.fwp6bjp.mongodb.net/?appName=Cluster0
