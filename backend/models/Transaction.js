@@ -20,21 +20,32 @@ const transactionSchema = new mongoose.Schema(
             min: 0
         },
 
-        category: {
-            type: String,
-            required: true,
-            enum: [
-                "Food",
-                "Transport",
-                "Shopping",
-                "Entertainment",
-                "Bills",
-                "Health",
-                "Education",
-                "Other"
-            ]
-        },
+       category: {
+    type: String,
+    required: true,
+    enum: [
+        // Expense categories
+        "Food",
+        "Transport",
+        "Shopping",
+        "Entertainment",
+        "Bills",
+        "Health",
+        "Education",
 
+        // Income categories
+        "Salary",
+        "Freelance",
+        "Business",
+        "Investment",
+        "Bonus",
+        "Gift",
+        "Refund",
+
+        // Common
+        "Other"
+    ]
+},
         type: {
             type: String,
             enum: ["income", "expense"],
@@ -56,4 +67,7 @@ const transactionSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("Transaction", transactionSchema);
+module.exports = mongoose.model(
+    "Transaction",
+    transactionSchema
+);

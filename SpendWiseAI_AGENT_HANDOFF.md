@@ -1,203 +1,162 @@
 # SpendWise AI — Agentic Coding Handoff
 
-## Project
-- Name: SpendWise AI
-- Type: MERN-style expense management app with real DSA features and planned AI insights
-- Local root: `C:\Users\hp\SpendWiseAI`
-- Backend: `C:\Users\hp\SpendWiseAI\backend`
-- Frontend: `C:\Users\hp\SpendWiseAI\frontend`
-- OS: Windows
-- Editor: VS Code
-- Backend port: `5000`
-- Database: MongoDB, currently verified through MongoDB Compass
-- GitHub repo has already been created and pushed; do NOT recreate it.
+## Project Summary
+SpendWise AI is a full-stack expense management app built with a Node.js/Express backend, MongoDB data storage, and a React + TypeScript frontend scaffolded via Vite.
 
-## User goal
-Build a strong portfolio/resume project combining:
-1. MERN/full-stack development
-2. JWT authentication
-3. Expense/income transaction management
-4. Analytics/dashboard
-5. Actual DSA implementations used by visible features
-6. AI-powered spending insights
-7. Clean React UI
-8. Interview-explainable architecture
+The current implementation includes backend user authentication, transaction CRUD, and analytics powered by a custom DSA-based HashMap. The frontend remains in the Vite starter state and has not yet been fully integrated with the backend APIs.
 
-Important: DSA must be genuinely implemented and used. Do not claim a DSA feature exists until it is actually in the code.
-
-## Current stack
+## Work Completed
 
 ### Backend
-- Node.js
-- Express
-- MongoDB
-- Mongoose
-- bcryptjs
-- jsonwebtoken
-- cors
-- dotenv
-- nodemon
-- CommonJS (`require`) style
+- Express server setup in `backend/server.js`
+- MongoDB connection with Mongoose
+- Environment variables via `dotenv`
+- CORS and JSON body parsing middleware
+- API routing structure for auth, transactions, and analytics
 
-### Frontend
-- React
-- TypeScript
-- Vite
+### Authentication
+- User registration endpoint: `POST /api/auth/register`
+- User login endpoint: `POST /api/auth/login`
+- JWT authentication middleware in `backend/middleware/authMiddleware.js`
+- Protected route example: `GET /api/auth/me`
+- Password hashing with `bcrypt`
+- JWT token creation with `jsonwebtoken`
 
-### Tools
-- VS Code
-- PowerShell
-- MongoDB Compass
-- Postman
-- Git/GitHub
+### Transaction Management
+- Transaction model in `backend/models/Transaction.js`
+- Transaction CRUD controller in `backend/controllers/transactionController.js`
+- Endpoints in `backend/routes/transactionRoutes.js`:
+  - `POST /api/transactions` (create)
+  - `GET /api/transactions` (list)
+  - `PUT /api/transactions/:id` (update)
+  - `DELETE /api/transactions/:id` (delete)
+- All transaction routes are protected by JWT middleware and scoped to the authenticated user
 
-## Current backend structure
+### Analytics / DSA Feature
+- Analytics route: `GET /api/analytics/category-summary`
+- `backend/controllers/analyticsController.js` uses a custom HashMap implementation
+- `backend/dsa/HashMap.js` implements a real hash map with:
+  - polynomial rolling hash
+  - separate chaining collision resolution
+  - automatic resizing
+  - `set`, `get`, `has`, `entries`, `keys`, `values` methods
+- `backend/dsa/hashMapAnalyzer.js` uses the HashMap for O(n) aggregation by transaction category
+- DSA unit tests exist in `backend/dsa/HashMap.test.js`
+
+## Current Backend File Structure
 
 ```text
 backend/
 ├── controllers/
+│   ├── analyticsController.js
 │   ├── authController.js
 │   └── transactionController.js
+├── dsa/
+│   ├── HashMap.js
+│   ├── HashMap.test.js
+│   └── hashMapAnalyzer.js
 ├── middleware/
 │   └── authMiddleware.js
 ├── models/
-│   ├── User.js
-│   └── Transaction.js
+│   ├── Transaction.js
+│   └── user.js
 ├── routes/
+│   ├── analyticsRoutes.js
 │   ├── authRoutes.js
 │   └── transactionRoutes.js
-├── dsa/                 # planned DSA implementations
-├── .env
 ├── package.json
-├── package-lock.json
 └── server.js
 ```
 
-Frontend is still largely based on the Vite React starter and has not yet been turned into the final SpendWise UI.
+## Frontend Status
+- Frontend uses React + TypeScript via Vite
+- Current UI is still the default starter page in `frontend/src/App.tsx`
+- No backend API integration with auth or transactions is implemented yet
+- `frontend/package.json` includes dependencies for `axios`, `chart.js`, `react-chartjs-2`, and `react-router-dom`, but no app code currently uses them
 
-## How to run backend
+## How to Run
 
-From the backend directory:
+### Backend
+From the backend folder:
 
 ```powershell
 cd C:\Users\hp\SpendWiseAI\backend
+npm install
 npm run dev
 ```
 
-Expected:
+Expected output:
 
 ```text
 Server running on http://localhost:5000
 MongoDB connected successfully
 ```
 
-Keep this terminal running while using Postman.
+### Frontend
+From the frontend folder:
 
-Common previous issue:
-- Running `npm run dev` from `C:\Users\hp\SpendWiseAI` caused ENOENT because the backend `package.json` is inside `backend`.
-- `ECONNREFUSED 127.0.0.1:5000` meant the backend was not running.
-
-## Environment/security
-
-The backend uses `.env` for secrets such as:
-- `MONGO_URI`
-- `JWT_SECRET`
-- `PORT`
-
-Never expose or commit `.env`.
-Never put secrets in the React frontend.
-Never commit `node_modules`.
-
-## MongoDB state
-
-Database:
-
-```text
-SpendWiseAI
+```powershell
+cd C:\Users\hp\SpendWiseAI\frontend
+npm install
+npm run dev
+```
 ```
 
-Collections currently verified:
+## Verified API Workflow
 
-```text
-users
-transactions
-```
+### Authentication
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
 
-Test user:
-- name: `Aviral`
-- email: `aviral@test.com`
-- password was tested successfully but is stored hashed with bcrypt.
+### Transaction CRUD
+- `POST /api/transactions`
+- `GET /api/transactions`
+- `PUT /api/transactions/:id`
+- `DELETE /api/transactions/:id`
 
-Test transaction:
-```text
-title: Lunch
-amount: 250
-category: Food
-type: expense
-description: Lunch with friends
-```
+### Analytics
+- `GET /api/analytics/category-summary`
 
-The transaction is linked to the authenticated user's ObjectId.
+## Notes on Implementation
+- User passwords are hashed before saving
+- JWT tokens are required for all transaction and analytics routes
+- Transaction record fields include `title`, `amount`, `category`, `type`, `description`, and `date`
+- Categories are restricted by enum values in the Mongoose schema
+- The analytics summary currently returns `totalIncome`, `totalExpense`, `balance`, and sorted `categorySummary`
+- The DSA HashMap is used in the analytics path, making this a genuine data-structure-backed feature
 
-Mongoose automatically created the collections when the first documents were inserted.
+## Known Gaps / Next Work
+- Frontend remains starter template; needs UI for auth, transaction forms, dashboard, and analytics
+- No AI recommendation engine implemented yet
+- No expense charts or dashboard UI wired to backend data
+- No undo/redo, queue, or heap DSA features implemented yet
+- No user settings, category management, or income/expense breakdown UI
 
-# Authentication — COMPLETE
+## Technical Notes
+- Backend runs on port `5000`
+- `frontend/package.json` is `type: module`
+- `backend/package.json` scripts: `npm run dev` starts `nodemon server.js`
+- Environment variables are expected in `backend/.env`
 
-## Register
-Endpoint:
+## Quick Status Summary
+- Backend: implemented and working
+- Auth: implemented and tested
+- Transaction CRUD: implemented and tested
+- Analytics: implemented and tested via custom HashMap DSA
+- Frontend: not yet integrated beyond starter scaffold
+- DSA: HashMap implemented and used in analytics; other DSA features remain planned
 
-```http
-POST http://localhost:5000/api/auth/register
-```
+---
 
-Example:
+## Recommendation
+Continue by building the frontend UI next, starting with:
+1. Authentication screens
+2. Transaction create/list/edit/delete flows
+3. Analytics dashboard using `/api/analytics/category-summary`
+4. Dashboard chart components and transaction summaries
+5. Add AI insight components after core UI is stable
 
-```json
-{
-  "name": "Aviral",
-  "email": "aviral@test.com",
-  "password": "123456"
-}
-```
-
-Successfully tested with HTTP 201 and verified in Compass.
-
-## Login
-Endpoint:
-
-```http
-POST http://localhost:5000/api/auth/login
-```
-
-Example:
-
-```json
-{
-  "email": "aviral@test.com",
-  "password": "123456"
-}
-```
-
-Successfully tested with HTTP 200 and a JWT response.
-
-JWT is generated conceptually as:
-
-```javascript
-jwt.sign(
-    { userId: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-);
-```
-
-Do not expose real JWTs in documentation.
-
-## JWT middleware
-File:
-
-```text
-backend/middleware/authMiddleware.js
-```
 
 Behavior:
 - Reads `Authorization`
